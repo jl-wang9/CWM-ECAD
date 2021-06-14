@@ -22,6 +22,7 @@ reg rst;
 reg clk;
 reg change;
 reg on_off;
+reg counter_old;
 wire counter_out;
 
 
@@ -37,37 +38,60 @@ end
 
 
 //Todo: User logic
+
+// Check reset feature
 initial
 begin
    // Initial inputs to test
    rst = 1;
    change = 0;
    on_off = 0;
-   err = 0;			// Error flag
+   err = 0;			// Error flag 
    
    forever begin
 	#(CLK_PERIOD)
 
-	// Check reset feature
-	if(counter_out !=0)		// triggered if counter not zero (not supposed to happen)
+	if(counter_out != 8'b0)		// triggered if counter not zero (not supposed to happen)
  	begin
 	   $display("***TEST FAILED, counter not reset when reset = 1***");
 	   err = 1;
    	end
-
-	rst = 0;
-	
-	
-
    end
 end
+
+
+
+// Check change feature
+initial
+begin
+   // Initial inputs to test
+   counter_old = 0;
+   rst = 0;
+   change = 0;
+   on_off = 0;
+   err = 0;			// Error flag 
+
+   forever begin
+	#(CLK_PERIOD)
+
+	if(counter_old != counter_out)		// triggered if counter not zero (not supposed to happen)
+ 	begin
+	   $display("***TEST FAILED, counter NOT CONSTANT when change is 0***");
+	   err = 1;
+   	end
+   end
+end
+
+
+
+
 
     
 //Todo: Finish test, check for success
 initial
 begin
    //#(256*CLK_PERIOD)		// Run for max possible period for a 8-bit to form 
-   #50
+   #5120
    if (err==0)
 	$display("***TEST PASSED! :) ***");
    $finish;

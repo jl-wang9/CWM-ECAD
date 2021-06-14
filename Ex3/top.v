@@ -38,12 +38,7 @@ module monitor (
 	else
 	   begin
 	   if(change)				// When change==1
-		begin
-		if(on_off)
-		   counter_out <= counter_out + 1;	// Count up
-		else
-		   counter_out <= counter_out - 1;	// Count down. Assume on_off = 1 or 0 only
-		end
+		counter_out = on_off? counter_out + 1 : counter_out - 1;
 	   else
 		counter_out = counter_out;		// Counter const if change==0
 	   end
