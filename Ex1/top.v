@@ -32,6 +32,8 @@ module blinds(
     
     wire   out;
          
-      //Todo: add you logic here
+//Todo: add you logic here
+// Code below concats values of a and b together to form 2-bit output.
+assign out = func[{a,b}];
 
 endmodule
