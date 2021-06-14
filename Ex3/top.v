@@ -20,11 +20,33 @@
 
 module monitor (
     //Todo: add ports 
-
+    input rst,			// reset
+    input clk,			// clock
+    input change,		// indicator if device is on or off
+    input on_off,		// type of event
+    output reg[7:0]counter_out	// 8-bit output register of time
     );
                     
     //Todo: add registers and wires, if needed
+    // Not needed as reg assigned in output above.
 
     //Todo: add user logic
-      
+    always @(posedge clk or posedge rst)	// Sensitivity list that is true when rising edge for clk
+    begin
+	if(rst)
+	   counter_out <= 0;			// Counter set to zero when reset is triggered
+	else
+	   begin
+	   if(change)				// When change==1
+		begin
+		if(on_off)
+		   counter_out <= counter_out + 1;	// Count up
+		else
+		   counter_out <= counter_out - 1;	// Count down. Assume on_off = 1 or 0 only
+		end
+	   else
+		counter_out = counter_out;		// Counter const if change==0
+	   end
+	 
+    end
 endmodule
