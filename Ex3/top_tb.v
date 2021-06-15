@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Test bench for Exercise #3 - Active IoT Devices Monitor
-// Student Name:
-// Date: 
+// Student Name: Jiale Wang (Somerville
+// Date: 14/06/21
 //
 // Description: A testbench module to test Ex3 - Active IoT Devices Monitor
 // Guidance: start with simple tests of the module (how should it react to each 
