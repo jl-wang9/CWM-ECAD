@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// Exercise #5 - Air Conditioning
+// Exercise #5 - Air Conditioning Complete
 // Student Name: Jiale Wang (Somerville)
 // Date: 15/06/21
 //
