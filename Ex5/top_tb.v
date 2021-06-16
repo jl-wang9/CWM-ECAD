@@ -20,7 +20,7 @@ module top_tb(
     reg [4:0]temperature;
     reg err = 1'b0;                 // Error Flag
     reg [1:0]old_concat_states;
-    
+
     wire [1:0]concat_states;        // {heating, cooling}
     
     //Clock generation
@@ -37,112 +37,202 @@ module top_tb(
     parameter LOWER_TEMP = 5'd18;
     
 
+    // TESTING CODE: Test 3 boundary temps repeatedly.
     //Stimulus logic
-    // TEST 1: temp = 18deg
     initial
     begin
-        #(CLK_PERIOD);
-        temperature <= 5'd15;
-        old_concat_states <= concat_states;
-        
-        #(CLK_PERIOD);
-        temperature <= LOWER_TEMP;
-        $display("Test 1: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
+        forever
+        begin
 
-        case(old_concat_states)
-            // Case 1: Heating OFF Cooling ON
-            2'b01:
-            begin
-                if (concat_states != 2'b00)
-                begin
-                    $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b00, concat_states);
-                    err = 1'b1;
-                end
-            end
-                    
-            // Case 2: Heating ON Cooling OFF        
-            2'b10:
-            begin
-                if (concat_states != 2'b10)
-                begin
-                    $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
-                    err = 1'b1;
-                end
-            end
-                    
-            // Case 3: Both in idle        
-            2'b00:
-            begin
-                if (concat_states != 2'b10)
-                begin
-                    $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
-                    err = 1'b1;
-                end
-            end
+            // Initial values - only acitvate on first pass
+            if (old_concat_states == "x")
+                // temperature <= 5'd15;
+                #(CLK_PERIOD);
+                // old_concat_states <= concat_states;
+                old_concat_states <= 2'b10;
             
-            // Other states - illegal
-            default:
-            begin
-                $display("***TEST 1 FAILED***, Illegal state");
-                err = 1'b1;
-            end
             
-        endcase
-        old_concat_states <= concat_states;
-    end
+            // **** TEST 1: temp = 18deg ****
+            temperature <= LOWER_TEMP;
+            #(CLK_PERIOD*3);
+            $display("Test 1: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
     
-    
-    // TEST 2: temp = 20deg
-    initial
-    begin
-        #100;
-        temperature <= MID_TEMP;
-        $display("Test 2: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
+            case(old_concat_states)
+                // Case 1: Heating OFF Cooling ON
+                2'b01:
+                begin
+                    if (concat_states != 2'b00)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                        
+                // Case 2: Heating ON Cooling OFF        
+                2'b10:
+                begin
+                    if (concat_states != 2'b10)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                        
+                // Case 3: Both in idle        
+                2'b00:
+                begin
+                    if (concat_states != 2'b10)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                
+                // Other states - illegal
+                default:
+                begin
+                    if(err != 1'b1)         // Added so error message only prints once
+                    begin
+                        $display("***TEST 1 FAILED***, Illegal state");
+                        err = 1'b1;
+                    end
+                end
+            endcase
+            old_concat_states <= concat_states;
+            
 
-        case(old_concat_states)
-            // Case 1: Heating OFF Cooling ON
-            2'b01:
-            begin
-                if (concat_states != 2'b00)
-                begin
-                    $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
-                    err = 1'b1;
-                end
-            end
-                    
-            // Case 2: Heating ON Cooling OFF        
-            2'b10:
-            begin
-                if (concat_states != 2'b00)
-                begin
-                    $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
-                    err = 1'b1;
-                end
-            end
-                    
-            // Case 3: Both in idle        
-            2'b00:
-            begin
-                if (concat_states != 2'b00)
-                begin
-                    $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
-                err = 1'b1;
-                end
-            end
+
+            // **** TEST 2: temp = 20deg ****
             
-            // Other states - illegal
-            default:
-            begin
-                $display("***TEST 2 FAILED***, Illegal state");
-                err = 1'b1;
-            end
-        endcase
-        // old_concat_states = concat_states;
+            temperature <= MID_TEMP;
+            #(CLK_PERIOD * 5);
+            $display("Test 2: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
+    
+            case(old_concat_states)
+                // Case 1: Heating OFF Cooling ON
+                2'b01:
+                begin
+                    if (concat_states != 2'b00)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                        
+                // Case 2: Heating ON Cooling OFF        
+                2'b10:
+                begin
+                    if (concat_states != 2'b00)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                        
+                // Case 3: Both in idle        
+                2'b00:
+                begin
+                    if (concat_states != 2'b00)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                
+                // Other states - illegal
+                default:
+                begin
+                    if(err != 1'b1)         // Added so error message only prints once
+                    begin
+                        $display("***TEST 2 FAILED***, Illegal state");
+                        err = 1'b1;
+                    end
+                end
+            endcase
+            old_concat_states <= concat_states;
+            
+            
+            
+            
+            // **** TEST 3: temp = 22deg ****
+            temperature <= UPPER_TEMP;
+            #(CLK_PERIOD * 7);
+            $display("Test 3: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
+    
+            case(old_concat_states)
+                // Case 1: Heating OFF Cooling ON
+                2'b01:
+                begin
+                    if (concat_states != 2'b01)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 3 FAILED***, expected state %b, got %b", 2'b01, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                        
+                // Case 2: Heating ON Cooling OFF        
+                2'b10:
+                begin
+                    if (concat_states != 2'b00)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 3 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                        
+                // Case 3: Both in idle        
+                2'b00:
+                begin
+                    if (concat_states != 2'b01)
+                    begin
+                        if(err != 1'b1)         // Added so error message only prints once
+                        begin
+                            $display("***TEST 3 FAILED***, expected state %b, got %b", 2'b01, concat_states);
+                            err = 1'b1;
+                        end
+                    end
+                end
+                
+                // Other states - illegal
+                default:
+                begin
+                    if(err != 1'b1)         // Added so error message only prints once
+                    begin
+                        $display("***TEST 3 FAILED***, Illegal state");
+                        err = 1'b1;
+                    end
+                end
+            endcase
+            old_concat_states <= concat_states;            
+            
+            
+        end // End forever
     end
-    
-    
-    
-    
+
     
     
     //Finish simulation and check for success
