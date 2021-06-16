@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Exercise #4 - Dynamic LED lights
 // Student Name: Jiale Wang (Somerville)
 // Date: 15/06/21
@@ -14,7 +14,7 @@
 //           colour [2:0]
 //
 //  You need to write the whole file.
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 `timescale 1ns / 100ps
 
@@ -30,7 +30,6 @@ module led (
     //Todo: add user logic
     always @(posedge clk or posedge rst)	// Sensitivity list that is true when rising edge
     begin
-    
         // Part 1: Implement reset, move colour to binary "001" on reset
         if(rst)
         begin  
@@ -47,12 +46,26 @@ module led (
                 3'b000: colour <= 3'b001;
                 3'b110: begin
                     if(button)
-                        colour <= 3'b001;
+                        colour <= 3'b001;   // To ensure b111 is never reached
                     else
                         colour = colour;    // Unchanged if button = 0
                 end
                 
-                // For all other cases
+                // Overflow / error cases
+                3'dx: 
+                begin
+                    colour <= 3'b001;
+                    $display("Gentle reminder: May have overflow / undefined colour value. Value has been reset to 001...");
+                end
+                
+                3'bx: 
+                begin
+                    colour <= 3'b001;
+                    $display("Gentle reminder: May have overflow / undefined colour value. Value has been reset to 001...");
+                end
+                
+                
+                // For all other cases - cycle colour
                 default: begin
                     if(button)
                         colour <= (colour + 3'b001);  // Step forward by 1 binary number
