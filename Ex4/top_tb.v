@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Test bench for Exercise #4 - Dynamic LED lights
-// Student Name: Jiale Wang (Somerville)
+// Test bench for Exercise #4 - Dynamic LED lights Completed
+// Student Name: Jiale Wang (Somerville) 
 // Date: 15/06/21
 //
 // Description: A testbench module to test Ex4 - Dynamic LED lights
@@ -161,4 +161,4 @@ module top_tb(
         .colour (colour)
     );
 
-endmodule
+endmodule 
