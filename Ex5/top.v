@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 // Exercise #5 - Air Conditioning
 // Student Name: Jiale Wang (Somerville)
 // Date: 15/06/21
@@ -22,20 +22,23 @@ module air_conditioning (
     input clk,
     input [4:0]temperature,
     
-    // Initialise initial state at idle
-    output reg heating = 1'b0,
-    output reg cooling = 1'b0
+    // Initialise initial state at idle.
+    output heating,
+    output cooling,
+    // !!!!! concat_states = {Heating, Cooling} concatenated into a vector !!!!
+    output reg[1:0]concat_states    
     );
 
     // Parameters
     parameter UPPER_TEMP = 5'd22;
     parameter MID_TEMP = 5'd20;
     parameter LOWER_TEMP = 5'd18;
-
-    //Todo: add user logic
-    assign concat_states = {heating, cooling};
-
     
+    
+    // Commented out following advice of demonstrator
+    // assign concat_states = {heating, cooling} 
+
+    // Todo: add user logic
     always @(posedge clk)	// Sensitivity list that is true when rising edge for clk
     begin
     
@@ -45,29 +48,32 @@ module air_conditioning (
             // Case 1: Heating OFF Cooling ON
             2'b01:
             begin
-                if (temperature <= MID_TEMP)
-                    cooling <= 1'b0;
+                if (temperature > MID_TEMP)
+                    concat_states <= 2'b01;
                 else
-                    cooling <= 1'b1;
+                    concat_states <= 2'b00;
             end
                     
             // Case 2: Heating ON Cooling OFF        
             2'b10:
             begin
-                if (temperature >= MID_TEMP)
-                    heating <= 1'b0;
+                if (temperature < MID_TEMP)
+                    concat_states <= 2'b10;
                 else
-                    heating <= 1'b1;
+                    concat_states <= 2'b00;
             end
                     
             // Case 3: Both in idle        
             2'b00:
             begin
-                cooling <= (temperature >= UPPER_TEMP)? 1'b1 : 1'b0;
-                heating <= (temperature <= LOWER_TEMP)? 1'b1 : 1'b0;
+                concat_states <= ((temperature < UPPER_TEMP) && (temperature > LOWER_TEMP))? 2'b00 : ((temperature >= UPPER_TEMP)? 2'b01 : 2'b10);
             end
                 
-            // No default statement given as Case 4 2'b11 is not possible
+            // Fail safe
+            default: begin
+                concat_states <= 2'b00;
+            end
+            
             
         endcase
     end
