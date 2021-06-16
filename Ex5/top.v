@@ -51,7 +51,7 @@ module air_conditioning (
                 if (temperature > MID_TEMP)
                     concat_states <= 2'b01;
                 else
-                    concat_states <= 2'b00;
+                    concat_states <= (temperature > LOWER_TEMP)? 2'b00 : 2'b10;
             end
                     
             // Case 2: Heating ON Cooling OFF        
@@ -60,7 +60,7 @@ module air_conditioning (
                 if (temperature < MID_TEMP)
                     concat_states <= 2'b10;
                 else
-                    concat_states <= 2'b00;
+                    concat_states <= (temperature < UPPER_TEMP)? 2'b00 : 2'b01;
             end
                     
             // Case 3: Both in idle        
