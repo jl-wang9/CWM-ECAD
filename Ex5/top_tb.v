@@ -42,11 +42,11 @@ module top_tb(
     initial
     begin
         #(CLK_PERIOD);
-        temperature = 5'd15;
-        old_concat_states = concat_states;
+        temperature <= 5'd15;
+        old_concat_states <= concat_states;
         
         #(CLK_PERIOD);
-        temperature = LOWER_TEMP;
+        temperature <= LOWER_TEMP;
         $display("Test 1: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
 
         case(old_concat_states)
@@ -88,7 +88,7 @@ module top_tb(
             end
             
         endcase
-        old_concat_states = concat_states;
+        old_concat_states <= concat_states;
     end
     
     
@@ -96,7 +96,7 @@ module top_tb(
     initial
     begin
         #100;
-        temperature = MID_TEMP;
+        temperature <= MID_TEMP;
         $display("Test 2: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
 
         case(old_concat_states)
