@@ -46,10 +46,9 @@ module top_tb(
 
             // Initial values - only acitvate on first pass
             if (old_concat_states == "x")
-                // temperature <= 5'd15;
+                temperature <= 5'd15;
                 #(CLK_PERIOD);
-                // old_concat_states <= concat_states;
-                old_concat_states <= 2'b10;
+                old_concat_states <= concat_states;
             
             
             // **** TEST 1: temp = 18deg ****
@@ -61,11 +60,11 @@ module top_tb(
                 // Case 1: Heating OFF Cooling ON
                 2'b01:
                 begin
-                    if (concat_states != 2'b00)
+                    if (concat_states != 2'b10)
                     begin
                         if(err != 1'b1)         // Added so error message only prints once
                         begin
-                            $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                            $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
                             err = 1'b1;
                         end
                     end
@@ -194,11 +193,11 @@ module top_tb(
                 // Case 2: Heating ON Cooling OFF        
                 2'b10:
                 begin
-                    if (concat_states != 2'b00)
+                    if (concat_states != 2'b01)
                     begin
                         if(err != 1'b1)         // Added so error message only prints once
                         begin
-                            $display("***TEST 3 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                            $display("***TEST 3 FAILED***, expected state %b, got %b", 2'b01, concat_states);
                             err = 1'b1;
                         end
                     end
