@@ -17,15 +17,11 @@ module top_tb(
 
     //Registers and wires
     reg clk = 1'b0;
-    reg [4:0]temperature = 5'd15;
+    reg [4:0]temperature;
     reg err = 1'b0;                 // Error Flag
-    reg [1:0]old_concat_states = 2'b01;
+    reg [1:0]old_concat_states;
     
-    wire heating;
-    wire cooling;
     wire [1:0]concat_states;        // {heating, cooling}
-
-    assign concat_states = {heating, cooling};
     
     //Clock generation
     initial
@@ -46,16 +42,20 @@ module top_tb(
     initial
     begin
         #(CLK_PERIOD);
-        temperature <= LOWER_TEMP;
+        temperature = 5'd15;
+        old_concat_states = concat_states;
+        
+        #(CLK_PERIOD);
+        temperature = LOWER_TEMP;
+        $display("Test 1: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
 
         case(old_concat_states)
             // Case 1: Heating OFF Cooling ON
             2'b01:
             begin
-            $display("2b01, %b", concat_states);
                 if (concat_states != 2'b00)
                 begin
-                    $display("***TEST FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                    $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b00, concat_states);
                     err = 1'b1;
                 end
             end
@@ -63,10 +63,9 @@ module top_tb(
             // Case 2: Heating ON Cooling OFF        
             2'b10:
             begin
-            $display("2b10, %b", concat_states);
                 if (concat_states != 2'b10)
                 begin
-                    $display("***TEST FAILED***, expected state %b, got %b", 2'b10, concat_states);
+                    $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
                     err = 1'b1;
                 end
             end
@@ -74,17 +73,78 @@ module top_tb(
             // Case 3: Both in idle        
             2'b00:
             begin
-            $display("2b00, %b", concat_states);
                 if (concat_states != 2'b10)
                 begin
-                    $display("***TEST FAILED***, expected state %b, got %b", 2'b10, concat_states);
+                    $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
+                    err = 1'b1;
+                end
+            end
+            
+            // Other states - illegal
+            default:
+            begin
+                $display("***TEST 1 FAILED***, Illegal state");
+                err = 1'b1;
+            end
+            
+        endcase
+        old_concat_states = concat_states;
+    end
+    
+    
+    // TEST 2: temp = 20deg
+    initial
+    begin
+        #100;
+        temperature = MID_TEMP;
+        $display("Test 2: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
+
+        case(old_concat_states)
+            // Case 1: Heating OFF Cooling ON
+            2'b01:
+            begin
+                if (concat_states != 2'b00)
+                begin
+                    $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                    err = 1'b1;
+                end
+            end
+                    
+            // Case 2: Heating ON Cooling OFF        
+            2'b10:
+            begin
+                if (concat_states != 2'b00)
+                begin
+                    $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
+                    err = 1'b1;
+                end
+            end
+                    
+            // Case 3: Both in idle        
+            2'b00:
+            begin
+                if (concat_states != 2'b00)
+                begin
+                    $display("***TEST 2 FAILED***, expected state %b, got %b", 2'b00, concat_states);
                 err = 1'b1;
                 end
             end
+            
+            // Other states - illegal
+            default:
+            begin
+                $display("***TEST 2 FAILED***, Illegal state");
+                err = 1'b1;
+            end
         endcase
+        // old_concat_states = concat_states;
     end
-     
-          
+    
+    
+    
+    
+    
+    
     //Finish simulation and check for success
     initial begin
         #500 
@@ -100,8 +160,7 @@ module top_tb(
     air_conditioning top (
         .clk (clk),
         .temperature (temperature),
-        .heating(heating),
-        .cooling(cooling)
+        .concat_states(concat_states)
     );
      
      
