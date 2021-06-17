@@ -44,27 +44,26 @@ module top_tb(
         forever
         begin
 
-            // Initial values - only acitvate on first pass
-            if (old_concat_states == "x")
-                temperature <= 5'd15;
-                #(CLK_PERIOD);
-                old_concat_states <= concat_states;
+            // Initial values
+            temperature <= 5'd15;
+            #(CLK_PERIOD);
+            old_concat_states <= concat_states;
             
             
             // **** TEST 1: temp = 18deg ****
             temperature <= LOWER_TEMP;
-            #(CLK_PERIOD*3);
+            #(CLK_PERIOD * 3);
             $display("Test 1: Old State: %b, New State: %b, Temperature: %b", old_concat_states, concat_states, temperature);
     
             case(old_concat_states)
                 // Case 1: Heating OFF Cooling ON
                 2'b01:
                 begin
-                    if (concat_states != 2'b10)
+                    if (concat_states != 2'b00)
                     begin
                         if(err != 1'b1)         // Added so error message only prints once
                         begin
-                            $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b10, concat_states);
+                            $display("***TEST 1 FAILED***, expected state %b, got %b", 2'b00, concat_states);
                             err = 1'b1;
                         end
                     end
@@ -193,11 +192,11 @@ module top_tb(
                 // Case 2: Heating ON Cooling OFF        
                 2'b10:
                 begin
-                    if (concat_states != 2'b01)
+                    if (concat_states != 2'b00)
                     begin
                         if(err != 1'b1)         // Added so error message only prints once
                         begin
-                            $display("***TEST 3 FAILED***, expected state %b, got %b", 2'b01, concat_states);
+                            $display("***TEST 3 FAILED***, expected state %b, got %b", 2'b00, concat_states);
                             err = 1'b1;
                         end
                     end
@@ -236,7 +235,7 @@ module top_tb(
     
     //Finish simulation and check for success
     initial begin
-        #500 
+        #300 
         if (err==1'b0)
             $display("***TEST PASSED! :)***");
             
