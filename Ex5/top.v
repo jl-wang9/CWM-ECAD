@@ -23,8 +23,8 @@ module air_conditioning (
     input [4:0]temperature,
     
     // Initialise initial state at idle.
-    output heating,
-    output cooling,
+    // output heating,
+    // output cooling,
     // !!!!! concat_states = {Heating, Cooling} concatenated into a vector !!!!
     output reg[1:0]concat_states    
     );
@@ -34,6 +34,8 @@ module air_conditioning (
     parameter MID_TEMP = 5'd20;
     parameter LOWER_TEMP = 5'd18;
     
+    // Flag
+    reg flag = 1'b0;
     
     // Commented out following advice of demonstrator
     // assign concat_states = {heating, cooling} 
@@ -41,39 +43,43 @@ module air_conditioning (
     // Todo: add user logic
     always @(posedge clk)	// Sensitivity list that is true when rising edge for clk
     begin
-    
+        flag <= 1'b0;
         // Case operation to define all posible conditions and actions to take
         case(concat_states)
-        
-            // Case 1: Heating OFF Cooling ON
             2'b01:
             begin
-                if (temperature > MID_TEMP)
-                    concat_states <= 2'b01;
-                else
-                    concat_states <= (temperature > LOWER_TEMP)? 2'b00 : 2'b10;
-            end
-                    
-            // Case 2: Heating ON Cooling OFF        
-            2'b10:
-            begin
-                if (temperature < MID_TEMP)
-                    concat_states <= 2'b10;
-                else
-                    concat_states <= (temperature < UPPER_TEMP)? 2'b00 : 2'b01;
-            end
-                    
-            // Case 3: Both in idle        
-            2'b00:
-            begin
-                concat_states <= ((temperature < UPPER_TEMP) && (temperature > LOWER_TEMP))? 2'b00 : ((temperature >= UPPER_TEMP)? 2'b01 : 2'b10);
-            end
-                
-            // Fail safe
-            default: begin
-                concat_states <= 2'b00;
+                if(flag == 1'b0)
+                begin
+                    concat_states <= (temperature > MID_TEMP)? 2'b01:2'b00;
+                    flag <= 1'b1;
+                end
             end
             
+            2'b10:         
+            begin
+                if(flag == 1'b0)
+                begin
+                    concat_states <= (temperature < MID_TEMP)? 2'b10:2'b00;
+                    flag <= 1'b1;
+                end
+            end
+            
+            default: 
+            begin
+                if(flag == 1'b0)
+                begin
+                    if((temperature > LOWER_TEMP) && (temperature < UPPER_TEMP))
+                        concat_states <= 2'b00;
+                    
+                    else if (temperature <= LOWER_TEMP)
+                        concat_states <= 2'b10;
+                        
+                    else
+                        concat_states <= 2'b01;
+                        
+                    flag <= 1'b1;
+                end
+            end
             
         endcase
     end
