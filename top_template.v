@@ -1,10 +1,11 @@
 `timescale 1ns / 100ps
 
-module monitor (rst, clk, change, on_off, counter_out);
+module monitor (
     //Todo: add ports 
-    input ADD_HERE;
+    input ADD_HERE,
 
-    output ADD_HERE;
+    output ADD_HERE
+	);
                     
     //Todo: add registers and wires, if needed
     // Not needed as reg assigned in output above.
