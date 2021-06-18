@@ -23,11 +23,11 @@ set_property -dict [list CONFIG.Memory_Type {Single_Port_RAM} CONFIG.Write_Width
 
 
 # Read files
+read_verilog "lights.v"
+read_verilog "converter.v"
+read_verilog "multiplexer.v"
 read_verilog "top.v"
 read_verilog "top_tb.v"
-read_verilog "led_lights.v"
-read_verilog "multiplexer.v"
-read_verilog "rgb_col_converter.v"
 
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
