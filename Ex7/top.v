@@ -23,13 +23,13 @@ module assembled (
     input button,
     input sel,      // Selector
 
-    output wire [23:0]light
+    output wire [23:0]light,
+    output wire [2:0]colour,
+    output wire [23:0]rgb
 	);
 
     //Todo: Internal Carry Signals
     wire enable = 1'b1;
-    wire [2:0]colour;
-    wire [23:0]rgb;
     wire [23:0]white = 24'hFFFFFF;   // White light
 
 

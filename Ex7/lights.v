@@ -55,13 +55,13 @@ module led (
                 3'dx: 
                 begin
                     colour <= 3'b001;
-                    $display("Gentle reminder: May have overflow / undefined colour value. Value has been reset to 001...");
+//                    $display("Gentle reminder: May have overflow / undefined colour value. Value has been reset to 001...");
                 end
                 
                 3'bx: 
                 begin
                     colour <= 3'b001;
-                    $display("Gentle reminder: May have overflow / undefined colour value. Value has been reset to 001...");
+//                    $display("Gentle reminder: May have overflow / undefined colour value. Value has been reset to 001...");
                 end
                 
                 
