@@ -115,20 +115,4 @@ module top_tb(
         .light (light)
      );
     
-    // Lightsv 
-    led top1 (
-        .clk (clk), 
-        .rst (rst), 
-        .button (button),
-        .colour (colour)
-     );
-     
-    // Converter.v 
-    colour_led top2 (
-        .clk (clk),
-        .colour (colour),
-        .rgb (rgb),
-        .enable (1'b1)         // Assume always enabled
-     ); 
-     
 endmodule 
